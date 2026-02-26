@@ -124,3 +124,30 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+
+
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #6c2bee;
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #161022;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-background-light text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors;
+  }
+  .sidebar-link-active {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium;
+  }
+}
