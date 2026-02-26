@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Pencil, MicOff, History } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfileSettingsPage() {
   return (
@@ -146,9 +147,11 @@ export default function ProfileSettingsPage() {
                 Unlock high-quality voices and unlimited clones.
               </p>
             </div>
-            <Button className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg shadow-sm whitespace-nowrap">
-              Upgrade Plan
-            </Button>
+            <Button asChild className="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-bold rounded-lg shadow-sm whitespace-nowrap">
+  <Link href="/pricing">
+    Upgrade Plan
+  </Link>
+</Button>
           </div>
 
         </CardContent>

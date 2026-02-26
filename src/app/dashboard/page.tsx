@@ -13,6 +13,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import Link from 'next/link';
 
 const StatCard = ({ title, value, trend, icon: Icon, trendUp }: { title: string, value: string, trend: string, icon: any, trendUp: boolean }) => (
   <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
@@ -112,10 +113,13 @@ const DashboardPage = () => (
           <Download size={16} />
           Export Report
         </button>
-        <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer">
-          <Plus size={16} />
-          New Generation
-        </button>
+        <Link 
+  href="/dashboard/text-voice" 
+  className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+>
+  <Plus size={16} />
+  New Generation
+</Link>
       </div>
     </div>
 
@@ -173,9 +177,7 @@ const DashboardPage = () => (
             icon={Smile} 
             colorClass="bg-pink-100 text-pink-600" 
           />
-          <button className="w-full py-3 border border-dashed border-slate-300 rounded-xl text-slate-500 text-sm font-medium hover:bg-slate-50 transition-colors cursor-pointer">
-            + Create Custom Model
-          </button>
+         
         </div>
       </div>
     </div>
