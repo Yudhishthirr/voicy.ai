@@ -36,7 +36,7 @@ export default function LandingPage() {
           
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-4">
-            <a href="#" className="text-sm font-medium text-slate-600 hover:text-slate-900">Log In</a>
+            <a href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">Log In</a>
             <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-full px-6">
               Get Started
             </Button>
