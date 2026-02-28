@@ -33,15 +33,17 @@ export const generateVoiceJob = inngest.createFunction(
         });
       }
     );
+    console.log("genrated voice funnation called");
+    console.log(generated);
+    console.log("Replicate URL:", generated.url);
 
-    /**
-     * STEP 2 — Upload Audio
-     */
-    const uploadedUrl = await step.run(
+
+
+     const uploadedUrl = await step.run(
       "upload-audio",
       async () => {
         return await uploadGeneratedAudio(
-          generated.audioUrl
+          generated.url
         );
       }
     );

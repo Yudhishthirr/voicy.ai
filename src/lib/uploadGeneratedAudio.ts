@@ -1,41 +1,38 @@
-import { utapi } from "./uploadthing-server";
+import { UTApi } from "uploadthing/server";
+
+const utapi = new UTApi();
 
 export async function uploadGeneratedAudio(
   replicateUrl: string
 ) {
-  /**
-   * 1️⃣ Download audio from replicate
-   */
-  const response = await fetch(replicateUrl);
 
-  if (!response.ok) {
-    throw new Error("Failed to download audio");
+  // 1️⃣ Fetch audio
+  const res = await fetch(replicateUrl);
+  console.log("get this infromateion feth of this upload file on cloud");
+  console.log(res)
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch replicate audio");
   }
 
-  const blob = await response.blob();
+  const blob = await res.blob();
 
-  /**
-   * 2️⃣ Convert Blob → File
-   */
+  // 2️⃣ Create File
   const file = new File(
     [blob],
-    `generated-${Date.now()}.wav`,
-    {
-      type: blob.type || "audio/wav",
-    }
+    `tts-${Date.now()}.wav`,
+    { type: "audio/wav" }
   );
+  console.log("fie is created you need to uploaded it ");
 
-  /**
-   * 3️⃣ Upload to UploadThing
-   */
+  // 3️⃣ Upload
   const uploaded = await utapi.uploadFiles(file);
-
-  if (!uploaded.data?.url) {
-    throw new Error("UploadThing upload failed");
+  console.log("upload thngs data");
+  console.log(uploaded);
+  
+  if (uploaded.error) {
+    throw new Error(uploaded.error.message);
   }
 
-  /**
-   * ✅ Permanent URL
-   */
   return uploaded.data.url;
 }

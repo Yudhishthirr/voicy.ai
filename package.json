@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "inngest": "npx --ignore-scripts=false inngest-cli@latest dev",
     "lint": "eslint"
   },
   "dependencies": {
