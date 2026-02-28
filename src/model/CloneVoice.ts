@@ -1,19 +1,19 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface CloneVoice extends Document {
-  userId: string;
+  user: mongoose.Types.ObjectId;
   voiceName: string;
   voiceSampleUrl: string;
-  clonedVoiceId: string;
+  // clonedVoiceId?: string;
   duration?: number;
   createdAt: Date;
 }
 
 const CloneVoiceSchema: Schema<CloneVoice> = new Schema({
-  userId: {
-    type: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User", // ✅ LINK USER MODEL
     required: true,
-    trim: true,
   },
 
   voiceName: {
@@ -27,15 +27,8 @@ const CloneVoiceSchema: Schema<CloneVoice> = new Schema({
     required: true,
   },
 
-  clonedVoiceId: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-
   duration: {
     type: Number,
-    required: false,
   },
 
   createdAt: {

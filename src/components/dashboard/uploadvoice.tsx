@@ -6,11 +6,17 @@ import { CloudUpload, Wand2 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { UploadButton } from "@/utils/uploadthing";
-import { toast } from "sonner"
+import { toast } from "sonner";
+import { createVoiceClone } from "@/service/voice.service";
+
 export function Uploadvoice() {
   const [voiceName, setVoiceName] = useState("");
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
+  const [duration, setDuration] = useState<number | null>(null);
+
   const [isUploading, setIsUploading] = useState(false);
+  const [isCloning, setIsCloning] = useState(false);
 
   /**
    * ✅ Validate duration BEFORE upload
@@ -25,23 +31,22 @@ export function Uploadvoice() {
       audio.onloadedmetadata = () => {
         URL.revokeObjectURL(audio.src);
 
-        const duration = audio.duration;
+        const audioDuration = Math.floor(audio.duration);
 
-        console.log("Audio duration:", duration);
+        console.log("Audio duration:", audioDuration);
 
-        const MIN_DURATION = 30; // seconds
-        const MAX_DURATION = 60; // seconds (1 min)
+        setDuration(audioDuration);
 
-        if (duration < MIN_DURATION) {
-          // alert(");
-          toast.error("Audio must be at least 30 seconds.")
+        const MIN_DURATION = 30;
+        const MAX_DURATION = 60;
+
+        if (audioDuration < MIN_DURATION) {
+          toast.error("Audio must be at least 30 seconds.");
           resolve(false);
-        } else if (duration > MAX_DURATION) {
-          // alert("");
-          toast.error("Audio must be under 1 minute.")
+        } else if (audioDuration > MAX_DURATION) {
+          toast.error("Audio must be under 1 minute.");
           resolve(false);
         } else {
-          // toast.success("Audio uploaded 🎉");
           resolve(true);
         }
       };
@@ -54,18 +59,40 @@ export function Uploadvoice() {
   };
 
   /**
-   * ✅ Clone Voice Handler
+   * ✅ Clone Voice API Call
    */
   const handleCloneVoice = async () => {
-    if (!voiceName || !audioUrl) return;
+    try {
+      if (!voiceName || !audioUrl || !duration) {
+        toast.error("Upload audio and enter voice name");
+        return;
+      }
 
-    console.log({
-      voiceName,
-      audioUrl,
-    });
+      setIsCloning(true);
 
-    // 👉 Call your backend API here
-    // await axios.post("/api/clone-voice", { voiceName, audioUrl });
+      await createVoiceClone({
+        voiceName,
+        voiceSampleUrl: audioUrl,
+        duration,
+      });
+
+      toast.success("Voice cloned successfully 🎉");
+
+      // reset
+      setVoiceName("");
+      setAudioUrl(null);
+      setDuration(null);
+
+    } catch (error: any) {
+      console.error(error);
+
+      toast.error(
+        error?.response?.data?.error ||
+          "Failed to clone voice"
+      );
+    } finally {
+      setIsCloning(false);
+    }
   };
 
   return (
@@ -74,9 +101,9 @@ export function Uploadvoice() {
         <CardContent className="p-6 md:p-8 space-y-8">
 
           {/* Upload Area */}
-          <div className="border-2 border-dashed border-violet-200 bg-[#fbfbfe] rounded-2xl p-10 flex flex-col items-center justify-center text-center hover:bg-violet-50/50 transition">
+          <div className="border-2 border-dashed border-violet-200 bg-[#fbfbfe] rounded-2xl p-10 flex flex-col items-center text-center hover:bg-violet-50/50 transition">
 
-            <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 mb-6 shadow-sm">
+            <div className="w-16 h-16 bg-violet-100 rounded-full flex items-center justify-center text-violet-600 mb-6">
               <CloudUpload className="w-8 h-8" />
             </div>
 
@@ -84,11 +111,11 @@ export function Uploadvoice() {
               Upload your voice recording
             </h3>
 
-            <p className="text-sm text-slate-500 max-w-sm mb-4">
+            <p className="text-sm text-slate-500 mb-4">
               Upload clean voice sample (30 sec – 1 min)
             </p>
 
-            {/* ✅ UploadThing Button */}
+            {/* ✅ UploadThing */}
             <UploadButton
               endpoint="audioUploader"
               appearance={{
@@ -98,20 +125,15 @@ export function Uploadvoice() {
                 allowedContent: "text-xs text-slate-400",
               }}
 
-              /**
-               * ✅ BLOCK INVALID AUDIO BEFORE UPLOAD
-               */
               onBeforeUploadBegin={async (files) => {
                 const file = files[0];
 
-                const isValid =
+                const valid =
                   await validateAudioDurationFromFile(file);
 
-                if (!isValid) {
-                  return []; // ❌ cancel upload
-                }
+                if (!valid) return [];
 
-                return files; // ✅ continue upload
+                return files;
               }}
 
               onUploadBegin={() => {
@@ -121,6 +143,7 @@ export function Uploadvoice() {
               onClientUploadComplete={(res) => {
                 setIsUploading(false);
                 setAudioUrl(res?.[0]?.url ?? null);
+                toast.success("Audio uploaded ✅");
               }}
 
               onUploadError={(error: Error) => {
@@ -129,10 +152,17 @@ export function Uploadvoice() {
               }}
             />
 
-            {/* Upload Success */}
+            {/* Success */}
             {audioUrl && (
-              <p className="text-green-600 text-sm font-medium mt-3">
+              <div className="mt-3 text-sm text-green-600 font-medium">
                 ✅ Audio uploaded successfully
+              </div>
+            )}
+
+            {/* Duration Display */}
+            {duration && (
+              <p className="text-xs text-slate-500 mt-2">
+                Duration: {duration}s
               </p>
             )}
           </div>
@@ -146,19 +176,30 @@ export function Uploadvoice() {
             <Input
               placeholder="e.g. My Podcast Voice"
               value={voiceName}
-              onChange={(e) => setVoiceName(e.target.value)}
+              onChange={(e) =>
+                setVoiceName(e.target.value)
+              }
               className="h-12 bg-slate-50 border-slate-200 rounded-xl"
             />
           </div>
 
           {/* Clone Button */}
           <Button
-            disabled={!voiceName || !audioUrl || isUploading}
+            disabled={
+              !voiceName ||
+              !audioUrl ||
+              isUploading ||
+              isCloning
+            }
             onClick={handleCloneVoice}
             className="w-full h-14 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold disabled:opacity-50"
           >
             <Wand2 className="w-5 h-5 mr-2" />
-            {isUploading ? "Uploading..." : "Start Cloning"}
+            {isUploading
+              ? "Uploading..."
+              : isCloning
+              ? "Cloning Voice..."
+              : "Start Cloning"}
           </Button>
 
         </CardContent>

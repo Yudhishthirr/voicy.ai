@@ -7,6 +7,7 @@ export interface User extends Document {
   email: string;
   password?: string;
   isPaid: boolean;
+  credit:number;
   createdAt: Date;
 }
 
@@ -41,6 +42,11 @@ const UserSchema: Schema<User> = new Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  credit:{
+    type:Number,
+    default:5,
+    required:true
   },
   createdAt: {
     type: Date,
