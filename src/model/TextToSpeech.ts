@@ -1,19 +1,19 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface TextToVoice extends Document {
-  userId: string;
+  user: mongoose.Types.ObjectId;
   text: string;
   voiceId: string;
-  audioUrl: string;
+  genratedvoice?: string;
   duration?: number;
   createdAt: Date;
 }
 
 const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
-  userId: {
-    type: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: "User", // ✅ LINK USER MODEL
     required: true,
-    trim: true,
   },
 
   text: {
@@ -28,11 +28,9 @@ const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
     trim: true,
   },
 
-  audioUrl: {
-    type: String,
-    required: true,
+  genratedvoice:{
+    type:String,
   },
-
   duration: {
     type: Number,
     required: false,
