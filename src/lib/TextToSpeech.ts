@@ -39,17 +39,34 @@ export async function TextToSpeech({
     "resemble-ai/chatterbox",
     {
       input: {
-        text,
+        prompt:text,
         audio_prompt: dataURI, // ✅ OPTION 3 DATA URI
         exaggeration: 0.5,
         cfg: 0.5,
       },
     }
   );
-
+  console.log("replicate reuslt");
+  console.log(output);
+  console.log(typeof output);
   /**
    * Replicate returns audio URL
    */
+
+  let audioUrl: string | null = null;
+
+  if (Array.isArray(output)) {
+    audioUrl = String(output[0]);
+  } else if (typeof output === "string") {
+    audioUrl = output;
+  } else if (output && typeof output === "object") {
+    audioUrl = String(output);
+  }
+
+  if (!audioUrl || audioUrl === "[object Object]") {
+    throw new Error("Replicate returned invalid URL");
+  }
+
   return {
     audioUrl: output,
   };

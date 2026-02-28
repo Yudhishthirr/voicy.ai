@@ -37,7 +37,7 @@ export function Uploadvoice() {
 
         setDuration(audioDuration);
 
-        const MIN_DURATION = 30;
+        const MIN_DURATION = 10;
         const MAX_DURATION = 60;
 
         if (audioDuration < MIN_DURATION) {

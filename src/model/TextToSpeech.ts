@@ -6,6 +6,7 @@ export interface TextToVoice extends Document {
   voiceId: string;
   genratedvoice?: string;
   duration?: number;
+  status: string;
   createdAt: Date;
 }
 
@@ -35,7 +36,11 @@ const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
     type: Number,
     required: false,
   },
-
+  status: {
+    type: String,
+    enum: ["pending", "ready", "failed"],
+    default: "pending",
+  },
   createdAt: {
     type: Date,
     default: Date.now,
