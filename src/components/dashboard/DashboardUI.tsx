@@ -67,7 +67,7 @@ const DashboardUI = () => {
           <div className="xl:col-span-2 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold">Recent Generations</h3>
-              <button className="text-sm text-primary font-semibold hover:underline cursor-pointer">View All</button>
+              <Link href={"/dashboard/library"} className="text-sm text-primary font-semibold hover:underline cursor-pointer">View All</Link>
             </div>
             <GenerationsTable />
           </div>

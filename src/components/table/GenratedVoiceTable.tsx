@@ -18,7 +18,7 @@ const [selectedAudio, setSelectedAudio] = useState<string | null>(null);
   const fetchVoices = async () => {
     try {
       const res = await getUserGenratedVoices();
-      // console.log(res.data);
+      // console.log(res.data.length);
       setVoices(res.data);
     } catch (error) {
       console.error("Voice Fetch Error:", error);
