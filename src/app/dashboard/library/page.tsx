@@ -12,6 +12,8 @@ import {
   Download,
   FileAudio
 } from "lucide-react";
+import { GenratedVoiceTable } from "@/components/table/GenratedVoiceTable";
+import { CloneVoiceTable } from "@/components/table/CloneVoiceTable ";
 
 // Mock data for the table
 const generatedAudios = [
@@ -50,8 +52,10 @@ const generatedAudios = [
 ];
 
 export default function LibraryPage() {
-  const [activeTab, setActiveTab] = useState("generated");
 
+
+  const [activeTab, setActiveTab] = useState("generated");
+  console.log(activeTab);
   return (
     <div className="max-w-6xl mx-auto space-y-8 min-h-full pb-8">
       
@@ -129,6 +133,7 @@ export default function LibraryPage() {
         
         {/* Custom Tabs */}
         <div className="flex items-center gap-8 border-b border-slate-200 overflow-x-auto hide-scrollbar">
+          
           <button 
             onClick={() => setActiveTab("generated")}
             className={`pb-4 text-sm font-bold whitespace-nowrap transition-colors relative ${
@@ -168,49 +173,12 @@ export default function LibraryPage() {
 
         {/* Table Container */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left min-w-[800px]">
-              <thead>
-                <tr className="border-b border-slate-100 bg-white">
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase">File Name</th>
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase">Voice</th>
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase">Duration</th>
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase">Date</th>
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase">Credits</th>
-                  <th className="px-6 py-4 font-bold text-slate-500 text-xs tracking-wider uppercase text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-600">
-                {generatedAudios.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <FileAudio className="w-5 h-5 text-violet-500 shrink-0" />
-                        <span className="font-bold text-slate-900 text-sm">{item.fileName}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-sm">{item.voice}</td>
-                    <td className="px-6 py-4 text-sm">{item.duration}</td>
-                    <td className="px-6 py-4 text-sm">{item.date}</td>
-                    <td className="px-6 py-4 text-sm font-bold text-slate-900">{item.credits}</td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <Button variant="outline" size="icon" className="w-9 h-9 border-slate-200 text-violet-600 hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700 rounded-lg">
-                          <Play className="w-4 h-4 ml-0.5 fill-current" />
-                        </Button>
-                        <Button variant="outline" size="icon" className="w-9 h-9 border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-lg">
-                          <Download className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
 
-          {/* Pagination Footer */}
-          <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
+          {activeTab == "generated" ? <GenratedVoiceTable/> : <CloneVoiceTable/>}
+          
+
+         
+          {/* <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
             <span className="text-sm text-slate-500 font-medium">
               Showing 1 to 4 of 1,284 entries
             </span>
@@ -231,7 +199,7 @@ export default function LibraryPage() {
                 Next
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
 
       </div>

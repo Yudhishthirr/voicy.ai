@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 
-import { Voicelist } from "@/components/dashboard/voicelist";
-import { Genratevoice } from "@/components/dashboard/genratevoice";
+import { VoiceDropdownlist } from "@/components/text-to-voice/voicedropdownlist";
+import { Genratevoice } from "@/components/text-to-voice/genratevoice";
 
 export default function TextToVoicePage() {
 
@@ -17,7 +17,7 @@ export default function TextToVoicePage() {
         <CardContent className="p-6 md:p-8">
 
           {/* Voice Selector */}
-          <Voicelist
+          <VoiceDropdownlist
             onSelect={setSelectedVoice}
           />
 

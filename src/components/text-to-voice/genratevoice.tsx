@@ -20,9 +20,16 @@ export function Genratevoice({
 
   const handleGenerate = async () => {
     try {
-      if (!text)
-        return toast.error("Enter text");
+      const cleanText = text.trim();
 
+      if (!cleanText) {
+        return toast.error("Enter text");
+      }
+  
+      if (cleanText.length < 100) {
+        return toast.error("Enter atleast 100 characters");
+      }
+    
       if (!selectedVoice)
         return toast.error(
           "Select voice model"
@@ -31,14 +38,14 @@ export function Genratevoice({
       setLoading(true);
 
       await generateVoice({
-        text,
+        text:cleanText,
         voiceId: selectedVoice._id,
         voiceSampleUrl:
           selectedVoice.voiceSampleUrl,
       });
 
       toast.success(
-        "Voice generated successfully 🎉"
+        "We will notity you when it completed 🎉"
       );
 
       setText("");
@@ -71,7 +78,7 @@ export function Genratevoice({
       <Button
         onClick={handleGenerate}
         disabled={loading}
-        className="w-full h-14 bg-violet-600 hover:bg-violet-700 text-white"
+        className="w-full cursor-pointer h-14 bg-violet-600 hover:bg-violet-700 text-white"
       >
         <Zap className="mr-2 w-5 h-5" />
         {loading

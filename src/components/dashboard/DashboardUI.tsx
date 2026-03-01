@@ -1,8 +1,8 @@
 "use client"
-import { GenerationsTable } from '@/components/cards/Generations';
-import { StatCard } from '@/components/cards/StatCard';
-import { UsageTrendCard } from '@/components/cards/UsageTrendCard';
-import { VoiceModelCard } from '@/components/cards/VoiceModelCard';
+import { GenerationsTable } from '@/components/dashboard/cards/Generations';
+import { StatCard } from '@/components/dashboard/cards/StatCard';
+import { UsageTrendCard } from '@/components/dashboard/cards/UsageTrendCard';
+import { VoiceModelCard } from '@/components/dashboard/cards/VoiceModelCard';
 import {
   Download,
   Plus,

@@ -5,7 +5,7 @@ import { Avatar } from "../ui/avatar";
 import { ChevronDown } from "lucide-react";
 import { getUserVoices } from "@/service/voice.service";
 
-export function Voicelist({
+export function VoiceDropdownlist({
   onSelect,
 }: {
   onSelect?: (voice: any) => void;

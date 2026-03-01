@@ -33,3 +33,11 @@ export const generateVoice = async (data: {
 
   return response.data;
 };
+
+
+export const getUserGenratedVoices = async () => {
+  const response = await api.get("/text-to-voice");
+  // console.log(response.data)
+  return response.data || [];
+};
+

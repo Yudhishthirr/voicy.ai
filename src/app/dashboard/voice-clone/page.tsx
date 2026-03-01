@@ -1,6 +1,6 @@
 "use client"
-import { CloneVoice } from "@/components/dashboard/clone-voice";
-import { Uploadvoice } from "@/components/dashboard/uploadvoice";
+import { CloneVoiceList } from "@/components/clonevoice/clone-voice-list";
+import { Uploadvoice } from "@/components/clonevoice/uploadvoice";
 
 export default function VoiceClonePage() {
 
@@ -25,7 +25,7 @@ export default function VoiceClonePage() {
 
         {/* RIGHT COLUMN: Cloned Voice List (Takes up 1/3 width on large screens) */}
        
-        <CloneVoice/>
+        <CloneVoiceList/>
       </div>
     </div>
   );

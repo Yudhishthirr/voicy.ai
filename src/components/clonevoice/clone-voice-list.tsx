@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { getUserVoices } from "@/service/voice.service";
 
-export function CloneVoice() {
+export function CloneVoiceList() {
   const [voices, setVoices] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 

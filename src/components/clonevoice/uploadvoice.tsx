@@ -128,8 +128,7 @@ export function Uploadvoice() {
               onBeforeUploadBegin={async (files) => {
                 const file = files[0];
 
-                const valid =
-                  await validateAudioDurationFromFile(file);
+                const valid = await validateAudioDurationFromFile(file);
 
                 if (!valid) return [];
 
@@ -143,7 +142,7 @@ export function Uploadvoice() {
               onClientUploadComplete={(res) => {
                 setIsUploading(false);
                 setAudioUrl(res?.[0]?.url ?? null);
-                toast.success("Audio uploaded ✅");
+                // toast.success("Audio uploaded ✅");
               }}
 
               onUploadError={(error: Error) => {
@@ -192,7 +191,7 @@ export function Uploadvoice() {
               isCloning
             }
             onClick={handleCloneVoice}
-            className="w-full h-14 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold disabled:opacity-50"
+            className="w-full cursor-pointer h-14 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-bold disabled:opacity-50"
           >
             <Wand2 className="w-5 h-5 mr-2" />
             {isUploading

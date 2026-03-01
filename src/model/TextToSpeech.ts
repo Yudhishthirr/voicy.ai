@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from "mongoose";
-
+import "@/model/CloneVoice";
 export interface TextToVoice extends Document {
   user: mongoose.Types.ObjectId;
   text: string;
-  voiceId: string;
+  voiceId: mongoose.Types.ObjectId;
   genratedvoice?: string;
   duration?: number;
   status: string;
@@ -24,11 +24,10 @@ const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
   },
 
   voiceId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "CloneVoice",
     required: true,
-    trim: true,
   },
-
   genratedvoice:{
     type:String,
   },
