@@ -41,3 +41,8 @@ export const getUserGenratedVoices = async () => {
   return response.data || [];
 };
 
+export const getUserCredit = async () =>{
+  const response = await api.get("/library");
+  // console.log(response.data)
+  return response.data || [];
+}

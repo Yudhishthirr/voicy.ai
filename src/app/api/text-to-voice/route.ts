@@ -4,6 +4,7 @@ import connectDB from "@/db/dbconfig";
 import UserModel from "@/model/Users";
 import TextToVoiceModel from "@/model/TextToSpeech";
 import { auth } from "@clerk/nextjs/server";
+import { MY_CONSTANTS } from "@/constant";
 
 
 
@@ -19,45 +20,56 @@ export async function POST(request: NextRequest) {
   const { text, voiceId, voiceSampleUrl } =
     await request.json();
 
-  /**
-   * ✅ Create Pending Record
-   */
-  const record =
-    await TextToVoiceModel.create({
-      user: user?._id,
-      text,
-      voiceId,
-      status: "pending",
+  
+    let creditsRequired = 0;
+    creditsRequired = Math.ceil((text.length / 100) * 2);
+
+    console.log("CREDITS_REQUIRED",creditsRequired);
+   
+    if (user.credit < creditsRequired) {
+
+      await TextToVoiceModel.create({
+        user: user?._id,
+        text,
+        voiceId,
+        status: MY_CONSTANTS.FAILED,
+      });
+
+
+
+      return NextResponse.json({
+        message: MY_CONSTANTS.INSUFFICIENT_CREDITS,
+        success: false,
+      });
+    }
+ 
+    const record = await TextToVoiceModel.create({
+        user: user?._id,
+        text,
+        voiceId,
+        status: MY_CONSTANTS.PENDING,
     });
 
-  /**
-   * ✅ Trigger Background Job
-   */
-  const result = await inngest.send({
-    name: "voice/generate",
-    data: {
-      recordId: record._id.toString(),
-      text,
-      userId, // ⭐ VERY IMPORTANT
-      voiceSampleUrl,
-    },
-  });
+  
+    const result = await inngest.send({
+      name: "voice/generate",
+      data: {
+        recordId: record._id.toString(),
+        text,
+        userId, // ⭐ VERY IMPORTANT
+        voiceSampleUrl,
+      },
+    });
 
 
-  console.log("result of inggest");
-  console.log(result);
+    console.log("result of inggest");
+    console.log(result);
 
-  // if (!result.success) {
-  //   return NextResponse.json({
-  //     success: false,
-  //     message: result.reason,
-  //   }, { status: 400 });
-  // }
 
-  return NextResponse.json({
-    message: "Generation started",
-    result,
-  });
+    return NextResponse.json({
+      message: MY_CONSTANTS.GENERATION_STARTED,
+      result,
+    });
 }
 
 
@@ -140,7 +152,7 @@ export async function GET() {
     // ✅ Fetch generated voices + populate voice name
     const voices = await TextToVoiceModel.find({
       user: user._id,
-      status: "ready",
+      status: { $in: ["ready", MY_CONSTANTS.READY] },
     })
     .populate({
       path: "voiceId",

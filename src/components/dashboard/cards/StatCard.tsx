@@ -1,6 +1,6 @@
 import { Activity } from "lucide-react";
 
-export const StatCard = ({ title, value, trend, icon: Icon, trendUp }: { title: string, value: string, trend: string, icon: any, trendUp: boolean }) => (
+export const StatCard = ({ title, value, trend, icon: Icon, trendUp }: { title: string, value: number, trend: string, icon: any, trendUp: boolean }) => (
     <div className="p-6 bg-white border border-slate-200 rounded-xl shadow-sm">
       <div className="flex items-center justify-between">
         <span className="text-slate-500 text-sm font-medium">{title}</span>

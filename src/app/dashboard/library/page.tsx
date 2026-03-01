@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -14,48 +14,55 @@ import {
 } from "lucide-react";
 import { GenratedVoiceTable } from "@/components/table/GenratedVoiceTable";
 import { CloneVoiceTable } from "@/components/table/CloneVoiceTable ";
+import { getUserGenratedVoices,getUserCredit,getUserVoices } from "@/service/voice.service";
 
 // Mock data for the table
-const generatedAudios = [
-  {
-    id: 1,
-    fileName: "Marketing_Campaign_V1.mp3",
-    voice: "James (British Male)",
-    duration: "02:45",
-    date: "Oct 24, 2023",
-    credits: "12 pts",
-  },
-  {
-    id: 2,
-    fileName: "Podcast_Intro_Final.mp3",
-    voice: "Sarah (US Female)",
-    duration: "00:32",
-    date: "Oct 23, 2023",
-    credits: "4 pts",
-  },
-  {
-    id: 3,
-    fileName: "Tutorial_Voiceover_2.mp3",
-    voice: "Marcus (Narrator)",
-    duration: "05:12",
-    date: "Oct 22, 2023",
-    credits: "22 pts",
-  },
-  {
-    id: 4,
-    fileName: "Explainer_Video_Audio.mp3",
-    voice: "Elena (Italian Accent)",
-    duration: "01:15",
-    date: "Oct 20, 2023",
-    credits: "8 pts",
-  }
-];
+
 
 export default function LibraryPage() {
 
 
   const [activeTab, setActiveTab] = useState("generated");
-  console.log(activeTab);
+  const [voices, setVoices] = useState<number[]>([]);
+  const [UserCredit,setUserCredit] = useState();
+  const [userclonevoice,setUserCloneVoice] = useState()
+
+  const getClonVOicesOfUser = async () =>{
+    try{
+      const uservocicecount = await getUserVoices();
+      console.log("data of generated voices in dashboard legth");
+      setUserCloneVoice(uservocicecount.length)
+    } catch{
+
+    }
+  }
+
+  const getCredit = async () =>{
+     try {
+      const data = await getUserCredit()
+
+      setUserCredit(data.data.credit)
+     } catch (error) {
+      
+     }
+  }
+  const fetchGeneratedVoices = async () => {
+    try {
+      const data = await getUserGenratedVoices();
+    
+      setVoices(data.data.length);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      
+    }
+  };
+  useEffect(() => {
+    fetchGeneratedVoices();
+    getCredit();
+    getClonVOicesOfUser();
+  }, []);
+  
   return (
     <div className="max-w-6xl mx-auto space-y-8 min-h-full pb-8">
       
@@ -81,7 +88,7 @@ export default function LibraryPage() {
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-500 mb-1">Total Generations</span>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-slate-900">1,284</span>
+                <span className="text-2xl font-bold text-slate-900">{voices}</span>
                 <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-xs font-bold">
                   <TrendingUp className="w-3 h-3" /> 12%
                 </div>
@@ -99,7 +106,7 @@ export default function LibraryPage() {
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-500 mb-1">Credits Used</span>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-slate-900">450</span>
+                <span className="text-2xl font-bold text-slate-900">{UserCredit}</span>
                 <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-xs font-bold">
                   <TrendingUp className="w-3 h-3" /> 5%
                 </div>
@@ -117,7 +124,7 @@ export default function LibraryPage() {
             <div className="flex flex-col">
               <span className="text-sm font-medium text-slate-500 mb-1">Cloned Voices</span>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-slate-900">12</span>
+                <span className="text-2xl font-bold text-slate-900">{userclonevoice}</span>
                 <div className="flex items-center gap-1 bg-emerald-50 text-emerald-600 px-1.5 py-0.5 rounded text-xs font-bold">
                   <TrendingUp className="w-3 h-3" /> 2%
                 </div>

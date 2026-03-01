@@ -3,6 +3,7 @@ import { GenerationsTable } from '@/components/dashboard/cards/Generations';
 import { StatCard } from '@/components/dashboard/cards/StatCard';
 import { UsageTrendCard } from '@/components/dashboard/cards/UsageTrendCard';
 import { VoiceModelCard } from '@/components/dashboard/cards/VoiceModelCard';
+import { getUserGenratedVoices } from '@/service/voice.service';
 import {
   Download,
   Plus,
@@ -14,11 +15,29 @@ import {
 } from 'lucide-react';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 
 const DashboardUI = () => {
 
-  
+  const [generatedVoices, setGeneratedVoices] = useState<any[]>([]);
+  const [voices, setVoices] = useState<number[]>([]);
+
+
+  const fetchGeneratedVoices = async () => {
+    try {
+      const data = await getUserGenratedVoices();
+      console.log("data of generated voices in dashboard legth");
+      setVoices(data.data.length);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      
+    }
+  };
+  useEffect(() => {
+    fetchGeneratedVoices();
+  }, []);
   return (
       <div className="p-8 space-y-8 max-w-7xl mx-auto w-full">
         
@@ -47,14 +66,14 @@ const DashboardUI = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard
             title="Total Generations"
-            value="1,284"
+            value={voices}
             trend="12% from last month"
             icon={BarChart3}
             trendUp={true}
           />
           <StatCard
             title="Hours of Audio"
-            value="42.5h"
+            value="0h"
             trend="8% from last month"
             icon={Clock}
             trendUp={true}

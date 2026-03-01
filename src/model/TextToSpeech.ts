@@ -1,5 +1,8 @@
 import mongoose, { Schema, Document } from "mongoose";
 import "@/model/CloneVoice";
+import { MY_CONSTANTS } from "@/constant";
+
+
 export interface TextToVoice extends Document {
   user: mongoose.Types.ObjectId;
   text: string;
@@ -9,6 +12,12 @@ export interface TextToVoice extends Document {
   status: string;
   createdAt: Date;
 }
+
+export const JOB_STATUS = Object.freeze({
+  PENDING: MY_CONSTANTS.PENDING,
+  READY: MY_CONSTANTS.READY,
+  FAILED: MY_CONSTANTS.FAILED,
+});
 
 const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
   user: {
@@ -37,8 +46,8 @@ const TextToVoiceSchema: Schema<TextToVoice> = new Schema({
   },
   status: {
     type: String,
-    enum: ["pending", "ready", "failed"],
-    default: "pending",
+    enum: Object.values(JOB_STATUS),
+    default: JOB_STATUS.PENDING,
   },
   createdAt: {
     type: Date,

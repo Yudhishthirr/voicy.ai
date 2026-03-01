@@ -7,6 +7,7 @@ import { Textarea } from "../ui/textarea";
 import { toast } from "sonner";
 
 import { generateVoice } from "@/service/voice.service";
+import { MY_CONSTANTS } from "@/constant";
 
 export function Genratevoice({
   selectedVoice,
@@ -37,16 +38,23 @@ export function Genratevoice({
 
       setLoading(true);
 
-      await generateVoice({
+      const response = await generateVoice({
         text:cleanText,
         voiceId: selectedVoice._id,
         voiceSampleUrl:
           selectedVoice.voiceSampleUrl,
       });
-
-      toast.success(
-        "We will notity you when it completed 🎉"
-      );
+      console.log(response);
+      if(response.message === MY_CONSTANTS.INSUFFICIENT_CREDITS){
+        toast.error(response.message);
+        setLoading(false);
+      }
+      else{
+        toast.success(
+          "We will notity you when it completed 🎉"
+        );
+      }
+      setLoading(false);
 
       setText("");
 
