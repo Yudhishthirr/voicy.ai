@@ -49,3 +49,20 @@ export async function TextToSpeech({text,voiceSampleUrl}:TextToSpeechArgumrts) {
     url: audioUrl,
   };
 }
+
+export async function DummyTextToSpeech({
+  text,
+  voiceSampleUrl,
+}: TextToSpeechArgumrts) {
+
+  console.log("⚡ Dummy TTS running (DEV MODE)");
+  console.log("Text:", text);
+  console.log("Voice:", voiceSampleUrl);
+
+  // fake delay like real AI generation
+  await new Promise((resolve) => setTimeout(resolve, 1500));
+
+  return {
+    url: "https://ef04l1zo39.ufs.sh/f/y26BqbmUg6SoLWrwaG93z2RQELm1HGDJvqIsXbPfnAepd3Ut",
+  };
+}

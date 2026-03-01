@@ -33,17 +33,30 @@ export async function POST(request: NextRequest) {
   /**
    * ✅ Trigger Background Job
    */
-  await inngest.send({
+  const result = await inngest.send({
     name: "voice/generate",
     data: {
       recordId: record._id.toString(),
       text,
+      userId, // ⭐ VERY IMPORTANT
       voiceSampleUrl,
     },
   });
 
+
+  console.log("result of inggest");
+  console.log(result);
+
+  // if (!result.success) {
+  //   return NextResponse.json({
+  //     success: false,
+  //     message: result.reason,
+  //   }, { status: 400 });
+  // }
+
   return NextResponse.json({
     message: "Generation started",
+    result,
   });
 }
 
