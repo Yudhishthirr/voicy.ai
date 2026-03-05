@@ -26,22 +26,22 @@ export async function POST(request: NextRequest) {
 
     console.log("CREDITS_REQUIRED",creditsRequired);
    
-    if (user.credit < creditsRequired) {
+    // if (user.credit < creditsRequired) {
 
-      await TextToVoiceModel.create({
-        user: user?._id,
-        text,
-        voiceId,
-        status: MY_CONSTANTS.FAILED,
-      });
+    //   await TextToVoiceModel.create({
+    //     user: user?._id,
+    //     text,
+    //     voiceId,
+    //     status: MY_CONSTANTS.FAILED,
+    //   });
 
 
 
-      return NextResponse.json({
-        message: MY_CONSTANTS.INSUFFICIENT_CREDITS,
-        success: false,
-      });
-    }
+    //   return NextResponse.json({
+    //     message: MY_CONSTANTS.INSUFFICIENT_CREDITS,
+    //     success: false,
+    //   });
+    // }
  
     const record = await TextToVoiceModel.create({
         user: user?._id,

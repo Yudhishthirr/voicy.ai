@@ -15,6 +15,7 @@ import {
 import { GenratedVoiceTable } from "@/components/table/GenratedVoiceTable";
 import { CloneVoiceTable } from "@/components/table/CloneVoiceTable ";
 import { getUserGenratedVoices,getUserCredit,getUserVoices } from "@/service/voice.service";
+import { FailledGenration } from "@/components/table/FailledGenration";
 
 // Mock data for the table
 
@@ -171,7 +172,7 @@ export default function LibraryPage() {
               activeTab === "history" ? "text-violet-700" : "text-slate-500 hover:text-slate-800"
             }`}
           >
-            Activity History
+            Failled Genration
             {activeTab === "history" && (
               <div className="absolute bottom-0 left-0 w-full h-0.5 bg-violet-600 rounded-t-full" />
             )}
@@ -181,8 +182,14 @@ export default function LibraryPage() {
         {/* Table Container */}
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
 
-          {activeTab == "generated" ? <GenratedVoiceTable/> : <CloneVoiceTable/>}
-          
+          {/* {activeTab == "generated" ? <GenratedVoiceTable/> : <CloneVoiceTable/>} */}
+          {activeTab === "generated" ? (
+            <GenratedVoiceTable />
+          ) : activeTab === "history" ? (
+            <FailledGenration />
+          ) : (
+            <CloneVoiceTable />
+          )}
 
          
           {/* <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">

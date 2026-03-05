@@ -41,6 +41,19 @@ export const getUserGenratedVoices = async () => {
   return response.data || [];
 };
 
+export const DeleteAudioById = async (id: string) => {
+  const response = await api.get(`/library/${id}`);
+  return response;
+};
+
+export const getUserFailedGenratedVoices = async (data:{
+  status:string;
+}) => {
+  const response = await api.post("/library",data);
+  // console.log(response.data)
+  return response.data || [];
+};
+
 export const getUserCredit = async () =>{
   const response = await api.get("/library");
   // console.log(response.data)
