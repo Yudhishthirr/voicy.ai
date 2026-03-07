@@ -2,7 +2,7 @@
 
 import dbConnect from "@/db/dbconfig";
 import UserModel from "@/model/Users";
-
+import PricingPlan from "@/model/Pricing"
 import { headers } from "next/headers";
 import { Webhook } from "svix";
 import type { WebhookEvent } from "@clerk/nextjs/server";
@@ -50,13 +50,17 @@ export async function POST(req: Request) {
     const existingUser = await UserModel.findOne({
       clerk_id: id,
     });
-
+    const freePlan = await PricingPlan.findOne({ name: "Free" });
+    console.log(freePlan);
+    
     if (!existingUser) {
       await UserModel.create({
         clerk_id: id,
         username: username || "User",
         email,
         avatar: image_url,
+        plan: freePlan._id,
+        credit: freePlan.credits
       });
 
       console.log("✅ User stored in MongoDB");

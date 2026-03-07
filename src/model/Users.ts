@@ -3,11 +3,17 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface User extends Document {
   clerk_id: string;
   username: string;
-  avatar:string;
+  avatar: string;
   email: string;
   password?: string;
+
+  plan: mongoose.Types.ObjectId;
+
   isPaid: boolean;
-  credit:number;
+  credit: number;
+
+  planExpiresAt?: Date;
+
   createdAt: Date;
 }
 
@@ -38,6 +44,12 @@ const UserSchema: Schema<User> = new Schema({
     required: false,
     trim: true,
   },
+  plan: {
+    type: Schema.Types.ObjectId,
+    ref: "PricingPlan",
+    required: true,
+  },
+
   isPaid: {
     type: Boolean,
     required: true,
@@ -45,8 +57,11 @@ const UserSchema: Schema<User> = new Schema({
   },
   credit:{
     type:Number,
-    default:5,
+    default:10,
     required:true
+  },
+  planExpiresAt: {
+    type: Date,
   },
   createdAt: {
     type: Date,

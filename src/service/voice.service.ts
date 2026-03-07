@@ -59,3 +59,9 @@ export const getUserCredit = async () =>{
   // console.log(response.data)
   return response.data || [];
 }
+
+export const getPlans = async () =>{
+  const response = await api.get("/plans");
+  // console.log(response.data)
+  return response.data || [];
+}

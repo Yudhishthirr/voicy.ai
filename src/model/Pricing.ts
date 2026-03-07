@@ -38,5 +38,5 @@ const PricingPlanSchema = new Schema<PricingPlan>({
   },
 });
 
-export default mongoose.models.PricingPlan ||
-  mongoose.model<PricingPlan>("PricingPlan", PricingPlanSchema);
+export default mongoose.models.Plan ||
+  mongoose.model<PricingPlan>("Plan", PricingPlanSchema);

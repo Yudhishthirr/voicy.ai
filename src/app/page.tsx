@@ -29,7 +29,7 @@ export default function LandingPage() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
             <a href="#" className="hover:text-violet-600 transition-colors">Features</a>
-            <a href="#" className="hover:text-violet-600 transition-colors">Pricing</a>
+            <a href="/pricing" className="hover:text-violet-600 transition-colors">Pricing</a>
             <a href="#" className="hover:text-violet-600 transition-colors">Enterprise</a>
             <a href="#" className="hover:text-violet-600 transition-colors">Docs</a>
           </nav>
