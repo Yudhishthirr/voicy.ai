@@ -10,6 +10,8 @@ import {
   LayoutDashboard, Mic2, Library, Download, PlayCircle, 
   Twitter, Linkedin, Github, Circle, Menu, X
 } from "lucide-react";
+import { Publicnav } from '@/components/pulic/publicnav';
+import { PublicFooter } from '@/components/pulic/publicfooter';
 
 export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,61 +20,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-violet-100 selection:text-violet-900 relative">
       
       {/* --- Navbar --- */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-violet-600 rounded-md flex items-center justify-center">
-              <AudioWaveform className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">Voicy.ai</span>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
-            <a href="#" className="hover:text-violet-600 transition-colors">Features</a>
-            <a href="/pricing" className="hover:text-violet-600 transition-colors">Pricing</a>
-            <a href="#" className="hover:text-violet-600 transition-colors">Enterprise</a>
-            <a href="#" className="hover:text-violet-600 transition-colors">Docs</a>
-          </nav>
-          
-          {/* Desktop Auth Buttons */}
-          <div className="hidden md:flex items-center gap-4">
-            <a href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">Log In</a>
-            <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-full px-6 cursor-pointer" onClick={() => router.push("/dashboard")}>
-              Get Started
-            </Button>
-          </div>
-
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-
-        {/* Mobile Navigation Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden absolute top-16 left-0 w-full bg-white border-b border-slate-100 shadow-lg px-4 py-6 flex flex-col gap-4 z-40">
-            <nav className="flex flex-col gap-4 text-base font-medium text-slate-600">
-              <a href="#" className="hover:text-violet-600 transition-colors">Features</a>
-              <a href="#" className="hover:text-violet-600 transition-colors">Pricing</a>
-              <a href="#" className="hover:text-violet-600 transition-colors">Enterprise</a>
-              <a href="#" className="hover:text-violet-600 transition-colors">Docs</a>
-            </nav>
-            <hr className="border-slate-100 my-2" />
-            <div className="flex flex-col gap-3">
-              <Button variant="outline" className="w-full border-slate-200">
-                Log In
-              </Button>
-              <Button className="w-full bg-violet-600 hover:bg-violet-700 text-white">
-                Get Started
-              </Button>
-            </div>
-          </div>
-        )}
-      </header>
+      <Publicnav/>
 
       <main>
         {/* --- Hero Section --- */}
@@ -319,66 +267,7 @@ export default function LandingPage() {
       </main>
 
       {/* --- Footer --- */}
-      <footer className="bg-white pt-12 md:pt-16 pb-8 border-t border-slate-100">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 mb-12 md:mb-16">
-            <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-4 md:mb-6">
-                <div className="w-6 h-6 bg-violet-600 rounded-md flex items-center justify-center">
-                  <AudioWaveform className="w-4 h-4 text-white" />
-                </div>
-                <span className="font-bold text-xl tracking-tight">Voicy.ai</span>
-              </div>
-              <p className="text-slate-500 text-xs sm:text-sm leading-relaxed max-w-xs mb-6">
-                The world's most advanced AI voice synthesis platform for professional creators, developers, and global brands.
-              </p>
-              <div className="flex items-center gap-4 text-slate-400">
-                <a href="#" className="hover:text-violet-600 transition-colors"><Twitter className="w-5 h-5" /></a>
-                <a href="#" className="hover:text-violet-600 transition-colors"><Linkedin className="w-5 h-5" /></a>
-                <a href="#" className="hover:text-violet-600 transition-colors"><Github className="w-5 h-5" /></a>
-              </div>
-            </div>
-            
-            <div className="col-span-1">
-              <h4 className="font-semibold mb-3 md:mb-4 text-slate-900 text-sm md:text-base">Product</h4>
-              <ul className="space-y-2 md:space-y-3 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Voice Lab</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">API</a></li>
-              </ul>
-            </div>
-            
-            <div className="col-span-1">
-              <h4 className="font-semibold mb-3 md:mb-4 text-slate-900 text-sm md:text-base">Company</h4>
-              <ul className="space-y-2 md:space-y-3 text-sm text-slate-500">
-                <li><a href="#" className="hover:text-violet-600 transition-colors">About Us</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Press</a></li>
-              </ul>
-            </div>
-            
-            <div className="col-span-2 lg:col-span-1">
-              <h4 className="font-semibold mb-3 md:mb-4 text-slate-900 text-sm md:text-base">Legal</h4>
-              <ul className="space-y-2 md:space-y-3 text-sm text-slate-500 flex flex-row lg:flex-col gap-4 lg:gap-0 flex-wrap">
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Privacy</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Terms</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Cookies</a></li>
-                <li><a href="#" className="hover:text-violet-600 transition-colors">Status</a></li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="flex flex-col-reverse md:flex-row justify-between items-center pt-8 border-t border-slate-100 text-[10px] sm:text-xs text-slate-400 gap-4 md:gap-0">
-            <p>© 2024 Voicy AI Technologies Inc. All rights reserved.</p>
-            <div className="flex items-center gap-2">
-              <Circle className="w-2 h-2 fill-green-500 text-green-500" />
-              <span>SYSTEM STATUS: OPERATIONAL</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter/>
       
       {/* Hide scrollbar utility for Webkit */}
       <style dangerouslySetInnerHTML={{__html: `

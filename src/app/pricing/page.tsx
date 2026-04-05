@@ -7,6 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { AudioWaveform, Menu, X, Check, X as XIcon, ChevronDown } from "lucide-react";
 
 import { getPlans } from "@/service/voice.service";
+import { Publicnav } from "@/components/pulic/publicnav";
+import { PublicFooter } from "@/components/pulic/publicfooter";
 
 type Plan = {
   _id: string;
@@ -70,23 +72,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[#fafafa] text-slate-900 font-sans">
 
       {/* Navbar */}
-      <header className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-100">
-        <div className="container mx-auto px-4 sm:px-6 md:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-violet-600 rounded-md flex items-center justify-center">
-              <AudioWaveform className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">Voicy.ai</span>
-          </div>
-
-          <button
-            className="md:hidden p-2 text-slate-600"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </button>
-        </div>
-      </header>
+      <Publicnav/>
 
       <main className="pb-24">
 
@@ -222,7 +208,9 @@ export default function PricingPage() {
             ))}
           </div>
         </section>
+    <PublicFooter/>
       </main>
     </div>
+    
   );
 }
