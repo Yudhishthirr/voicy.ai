@@ -9,6 +9,7 @@ const isProtectedRoute = createRouteMatcher([
 // ✅ PUBLIC routes (important)
 const isPublicRoute = createRouteMatcher([
   "/api/webhooks/clerk",
+   "/api/firevent",
 ]);
 
 export default clerkMiddleware(async (auth, req) => {

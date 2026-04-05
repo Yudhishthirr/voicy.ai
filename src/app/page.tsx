@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { useRouter } from 'next/navigation';
 import { 
   Sparkles, Play, Mic, AudioWaveform, Zap, Cloud, 
   LayoutDashboard, Mic2, Library, Download, PlayCircle, 
@@ -12,7 +13,7 @@ import {
 
 export default function LandingPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-violet-100 selection:text-violet-900 relative">
       
@@ -37,7 +38,7 @@ export default function LandingPage() {
           {/* Desktop Auth Buttons */}
           <div className="hidden md:flex items-center gap-4">
             <a href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-slate-900">Log In</a>
-            <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-full px-6">
+            <Button className="bg-violet-600 hover:bg-violet-700 text-white rounded-full px-6 cursor-pointer" onClick={() => router.push("/dashboard")}>
               Get Started
             </Button>
           </div>
