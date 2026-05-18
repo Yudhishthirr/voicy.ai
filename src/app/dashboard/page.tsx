@@ -13,30 +13,34 @@ export default async function DashboardPage() {
   await connectDB();
 
   // ✅ check user exists
-  let dbUser = await UserModel.findOne({
-    clerk_id: userId,
-  });
-  const freePlan = await PricingPlan.findOne({ name: "Free" });
-  // ✅ FALLBACK (MAGIC LINE)
-  if (!dbUser) {
+  // let dbUser = await UserModel.findOne({
+  //   clerk_id: userId,
+  // });
+  // const freePlan = await PricingPlan.findOne({ name: "Free" });
+  // if (!dbUser) {
+  //   const clerkUser = await currentUser();
 
-    const clerkUser = await currentUser();
+  //   dbUser = await UserModel.findOneAndUpdate(
+  //     { clerk_id: clerkUser?.id },
+  //     {
+  //       clerk_id: clerkUser?.id,
+  //       username: clerkUser?.username || "User",
+  //       email: clerkUser?.emailAddresses[0].emailAddress,
+  //       avatar: clerkUser?.imageUrl,
+  //       plan: freePlan?._id,
+  //       credit: freePlan?.credits,
+  //     },
+  //     { upsert: true, returnDocument: "after" }
+  //   );
 
-    dbUser = await UserModel.findOneAndUpdate(
-      { clerk_id: clerkUser?.id },
-      {
-        clerk_id: clerkUser?.id,
-        username: clerkUser?.username || "User",
-        email: clerkUser?.emailAddresses[0].emailAddress,
-        avatar: clerkUser?.imageUrl,
-        plan: freePlan?._id,
-        credit: freePlan?.credits
-      },
-      { upsert: true, returnDocument: "after" }
-    );
-
-    console.log("⚡ Fallback user created");
-  }
+  //   console.log("⚡ Fallback user created");
+  // } else if (!dbUser.plan && freePlan) {
+  //   dbUser = await UserModel.findOneAndUpdate(
+  //     { clerk_id: userId },
+  //     { plan: freePlan._id },
+  //     { returnDocument: "after" }
+  //   );
+  // }
 
   return <DashboardUI />;
 }

@@ -1,5 +1,5 @@
 import { inngest } from "./client";
-
+import { Resend } from "resend";
 import connectDB from "@/db/dbconfig";
 import TextToVoiceModel from "@/model/TextToSpeech";
 
@@ -13,6 +13,8 @@ import { uploadGeneratedAudio } from "@/lib/uploadGeneratedAudio";
 import UserModel from "@/model/Users";
 import CreditTransaction from "@/model/CreditHistory";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export const generateVoiceJob = inngest.createFunction(
   { id: "generate-voice-job" },
   { event: "voice/generate" },
@@ -25,12 +27,12 @@ export const generateVoiceJob = inngest.createFunction(
       voiceSampleUrl,
       userId,
     } = event.data;
-
+    console.log("Event data:", userId);
     await connectDB();
 
     let creditsRequired = 0;
 
-    
+
     const creditResult = await step.run(
       "deduct-credits",
       async () => {
@@ -46,28 +48,36 @@ export const generateVoiceJob = inngest.createFunction(
           throw new Error("User not found");
 
         creditsRequired = Math.ceil((text.length / 100) * 2);
-        console.log("CREDITS_REQUIRED",creditsRequired);
-       
+        console.log("CREDITS_REQUIRED", creditsRequired);
+        
         if (user.credit < creditsRequired) {
-         
-
-          await TextToVoiceModel.findByIdAndUpdate(
-            recordId,
-            {
-              status: "failed",
-            }
-          );
+          await TextToVoiceModel.findByIdAndUpdate(recordId, {
+            status: "failed",
+          });
           return {
             success: false,
             reason: "INSUFFICIENT_CREDITS",
           };
         }
 
-        user.credit -= creditsRequired;
-        await user.save();
+        const updatedUser = await UserModel.findOneAndUpdate(
+          { clerk_id: userId, credit: { $gte: creditsRequired } },
+          { $inc: { credit: -creditsRequired } },
+          { new: true }
+        );
+
+        if (!updatedUser) {
+          await TextToVoiceModel.findByIdAndUpdate(recordId, {
+            status: "failed",
+          });
+          return {
+            success: false,
+            reason: "INSUFFICIENT_CREDITS",
+          };
+        }
 
         await CreditTransaction.create({
-          user: user._id,
+          user: updatedUser._id,
           credits: creditsRequired,
           type: "debit",
           reason: "Voice Generation",
@@ -77,7 +87,7 @@ export const generateVoiceJob = inngest.createFunction(
       }
     );
 
-   
+
     if (!creditResult?.success) {
       console.log(
         "Job stopped:",
@@ -86,7 +96,7 @@ export const generateVoiceJob = inngest.createFunction(
       return creditResult;
     }
 
-    
+
     const generated = await step.run(
       "replicate-generation",
       async () => {
@@ -101,7 +111,7 @@ export const generateVoiceJob = inngest.createFunction(
 
     console.log("Generated:", generated.url);
 
-   
+
     const uploadedUrl = await step.run(
       "upload-audio",
       async () => {
@@ -111,7 +121,7 @@ export const generateVoiceJob = inngest.createFunction(
       }
     );
 
-    
+
     await step.run("update-db", async () => {
 
       await TextToVoiceModel.findByIdAndUpdate(
@@ -123,6 +133,112 @@ export const generateVoiceJob = inngest.createFunction(
       );
     });
 
+//     await step.run("send-email", async () => {
+
+//       await resend.emails.send({
+//         from: "Your Name <onboarding@resend.dev>", // change later
+//         to: email,
+//         subject: "Your Figma File Link",
+//         html: `
+//   <div style="font-family: Arial, sans-serif; background-color: #0f172a; padding: 40px 0;">
+//     <div style="max-width: 600px; margin: auto; background: #111827; border-radius: 14px; padding: 32px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.4);">
+      
+//       <h1 style="color: #ffffff; margin-bottom: 10px; font-size: 26px;">
+//         🎙️ Your Voice is Ready
+//       </h1>
+      
+//       <p style="color: #9ca3af; font-size: 16px; margin-bottom: 25px;">
+//         Your AI-generated voice has been successfully created.<br/>
+//         It’s now ready for you to listen, download, and use anywhere.
+//       </p>
+
+//       <a href="${audioLink}" target="_blank"
+//         style="
+//           display: inline-block;
+//           padding: 14px 30px;
+//           background: linear-gradient(135deg, #6366f1, #8b5cf6);
+//           color: #ffffff;
+//           text-decoration: none;
+//           border-radius: 10px;
+//           font-weight: bold;
+//           font-size: 16px;
+//           margin-bottom: 25px;
+//         ">
+//         ▶️ Listen to Your Voice
+//       </a>
+
+//       <p style="color: #6b7280; font-size: 14px;">
+//         Pro tip: You can use this voice for content creation, reels, ads, or storytelling 🚀
+//       </p>
+
+//       <div style="margin: 25px 0; padding: 15px; background: #1f2937; border-radius: 10px;">
+//         <p style="color: #d1d5db; font-size: 14px; margin: 0;">
+//           ⚡ Generated by <strong>Voicey.ai</strong> — Your AI Voice Engine
+//         </p>
+//       </div>
+
+//       <hr style="border: none; border-top: 1px solid #1f2937; margin: 30px 0;" />
+
+//       <p style="color: #6b7280; font-size: 12px;">
+//         If you didn’t request this, you can safely ignore this email.
+//       </p>
+
+//       <p style="color: #9ca3af; font-size: 14px; margin-top: 12px;">
+//         — Yudhishthir ⚡
+//       </p>
+
+//     </div>
+//   </div>
+// `
+//       });
+//     });
+
+
+    await step.run("send-email", async () => {
+
+  const user = await UserModel.findOne({
+    clerk_id: userId,
+  });
+
+  if (!user) throw new Error("User not found");
+
+  const email = user.email;
+  console.log("User email:", email);
+  // const audioLink = uploadedUrl;
+
+  const { data, error } = await resend.emails.send({
+    from: "Your Name <onboarding@resend.dev>", // change later
+    to: email,
+    subject: "🎙️ Your Voice is Ready",
+    html: `
+      <div style="font-family: Arial, sans-serif; background-color: #0f172a; padding: 40px 0;">
+        <div style="max-width: 600px; margin: auto; background: #111827; border-radius: 14px; padding: 32px; text-align: center;">
+          
+          <h1 style="color: #ffffff;">🎙️ Your Voice is Ready</h1>
+
+          <p style="color: #9ca3af;">
+            Your AI-generated voice is ready to use 🚀
+          </p>
+
+         
+
+          <p style="color:#6b7280;margin-top:20px;">
+            Generated by <b>Voicey.ai</b>
+          </p>
+
+        </div>
+      </div>
+    `,
+    idempotencyKey: `voice-email/${recordId}`, // ✅ prevent duplicates
+  });
+
+  if (error) {
+    console.error("Email Error:", error);
+    return;
+  }
+
+  console.log("Email sent:", data);
+});
     return { success: true };
   }
 );
