@@ -117,7 +117,7 @@ export default function PricingPage() {
                     </CardTitle>
 
                     <div className="mt-4 mb-2 flex items-baseline text-5xl font-extrabold">
-                      ${plan.price}
+                      {plan.price}
                       <span className="text-lg text-slate-500 ml-1">/mo</span>
                     </div>
 
@@ -130,10 +130,10 @@ export default function PricingPage() {
 
                     <Button
                       className={`w-full mb-8 h-12 ${plan.name === "Creator"
-                          ? "bg-violet-600 hover:bg-violet-700 text-white"
+                          ? "bg-violet-600 hover:bg-violet-700 text-white cursor-pointer"
                           : plan.name === "Pro"
-                            ? "bg-black hover:bg-slate-800 text-white"
-                            : "bg-slate-100 hover:bg-slate-200 text-slate-900"
+                            ? "bg-black hover:bg-slate-800 text-white cursor-pointer"
+                            : "bg-slate-100 hover:bg-slate-200 text-slate-900 cursor-pointer"
                         }`}
                     >
                       {plan.name === "Free"
@@ -157,12 +157,7 @@ export default function PricingPage() {
                         </li>
                       )}
 
-                      {plan.name === "Pro" && (
-                        <li className="flex items-center gap-3">
-                          <Check className="w-5 h-5 text-green-500" />
-                          API Access
-                        </li>
-                      )}
+                     
                     </ul>
 
                   </CardContent>

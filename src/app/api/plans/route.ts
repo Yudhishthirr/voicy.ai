@@ -10,7 +10,7 @@ export async function GET() {
       await connectDB();
   
       const plans = await PricingPlan.find({ isActive: true }).sort({ price: 1 });
-
+      console.log(plans)
       return NextResponse.json({
         success: true,
         plans,
