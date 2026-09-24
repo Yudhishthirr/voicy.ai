@@ -1,14 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Script from "next/script";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { AudioWaveform, Menu, X, Check, X as XIcon, ChevronDown } from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+
+import { Check, ChevronDown } from "lucide-react";
 
 import { getPlans } from "@/service/voice.service";
+
 import { Publicnav } from "@/components/pulic/publicnav";
 import { PublicFooter } from "@/components/pulic/publicfooter";
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 type Plan = {
   _id: string;
@@ -45,21 +61,135 @@ export default function PricingPage() {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [billingMode, setBillingMode] = useState<"credits" | "monthly">("monthly");
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+  const [openFaqIndex, setOpenFaqIndex] =
+    useState<number | null>(0);
 
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
+  // PAYMENT FUNCTION
+  const handlePayment = async (plan: Plan) => {
+    try {
+
+      // FREE PLAN
+      if (plan.name === "Free") {
+        alert("Free plan activated");
+        return;
+      }
+
+      // CREATE ORDER
+      const response = await fetch("/api/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: plan.price,
+        }),
+      });
+
+      const order = await response.json();
+
+      if (!order.id) {
+        alert("Failed to create order");
+        return;
+      }
+
+      // RAZORPAY OPTIONS
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+
+        amount: order.amount,
+        currency: order.currency,
+
+        name: "Voicy AI",
+
+        description: `${plan.name} Plan`,
+
+        order_id: order.id,
+
+        handler: async function (response: any) {
+
+          try {
+
+            // VERIFY PAYMENT
+            const verifyResponse = await fetch(
+              "/api/verify-payment",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type": "application/json",
+                },
+
+                body: JSON.stringify({
+                  ...response,
+                  planId: plan._id,
+                }),
+              }
+            );
+
+            const data = await verifyResponse.json();
+
+            if (data.success) {
+              alert("Payment Successful ✅");
+
+              window.location.reload();
+
+            } else {
+              alert("Payment Verification Failed ❌");
+            }
+
+          } catch (error) {
+            console.log(error);
+
+            alert("Verification failed");
+          }
+        },
+
+        prefill: {
+          name: "Customer",
+          email: "customer@example.com",
+        },
+
+        theme: {
+          color: "#7c3aed",
+        },
+      };
+
+      // OPEN RAZORPAY
+      const razorpay = new window.Razorpay(options);
+
+      razorpay.open();
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Something went wrong");
+    }
   };
 
+  // FAQ TOGGLE
+  const toggleFaq = (index: number) => {
+    setOpenFaqIndex(
+      openFaqIndex === index ? null : index
+    );
+  };
+
+  // LOAD PLANS
   useEffect(() => {
     async function loadPlans() {
       try {
+
         const data = await getPlans();
+
         setPlans(data.plans);
+
       } catch (error) {
-        console.error("Failed to fetch plans", error);
+
+        console.error(
+          "Failed to fetch plans",
+          error
+        );
+
       } finally {
         setLoading(false);
       }
@@ -71,96 +201,133 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] text-slate-900 font-sans">
 
-      {/* Navbar */}
-      <Publicnav/>
+      {/* RAZORPAY SCRIPT */}
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+
+      {/* NAVBAR */}
+      <Publicnav />
 
       <main className="pb-24">
 
-        {/* Header */}
+        {/* HEADER */}
         <section className="pt-20 pb-16 text-center px-4">
+
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
             Simple & Transparent Pricing
           </h1>
 
           <p className="text-slate-500 text-lg max-w-xl mx-auto mb-10">
-            Choose the plan that's right for your voice generation needs.
+            Choose the plan that's right for your
+            voice generation needs.
           </p>
+
         </section>
 
-        {/* Pricing Cards */}
+        {/* PRICING */}
         <section className="container mx-auto px-4 sm:px-6 md:px-8 max-w-6xl mb-24">
 
           {loading ? (
-            <p className="text-center text-slate-500">Loading plans...</p>
+
+            <p className="text-center text-slate-500">
+              Loading plans...
+            </p>
+
           ) : (
+
             <div className="grid md:grid-cols-3 gap-8 items-center">
 
               {plans.map((plan) => (
+
                 <Card
                   key={plan._id}
-                  className={`rounded-2xl bg-white ${plan.name === "Creator"
+                  className={`rounded-2xl bg-white relative ${
+                    plan.name === "Creator"
                       ? "border-violet-500 shadow-xl"
                       : "border-slate-200 shadow-sm"
-                    }`}
+                  }`}
                 >
+
                   {plan.name === "Creator" && (
+
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+
                       <Badge className="bg-violet-600 text-white">
                         Most Popular
                       </Badge>
+
                     </div>
                   )}
 
                   <CardHeader>
+
                     <CardTitle className="text-xl font-bold">
                       {plan.name}
                     </CardTitle>
 
                     <div className="mt-4 mb-2 flex items-baseline text-5xl font-extrabold">
-                      {plan.price}
-                      <span className="text-lg text-slate-500 ml-1">/mo</span>
+
+                      ₹{plan.price}
+
+                      <span className="text-lg text-slate-500 ml-1">
+                        /mo
+                      </span>
+
                     </div>
 
                     <CardDescription>
                       {plan.description}
                     </CardDescription>
+
                   </CardHeader>
 
                   <CardContent>
 
                     <Button
-                      className={`w-full mb-8 h-12 ${plan.name === "Creator"
-                          ? "bg-violet-600 hover:bg-violet-700 text-white cursor-pointer"
+                      onClick={() =>
+                        handlePayment(plan)
+                      }
+                      className={`w-full mb-8 h-12 ${
+                        plan.name === "Creator"
+                          ? "bg-violet-600 hover:bg-violet-700 text-white"
                           : plan.name === "Pro"
-                            ? "bg-black hover:bg-slate-800 text-white cursor-pointer"
-                            : "bg-slate-100 hover:bg-slate-200 text-slate-900 cursor-pointer"
-                        }`}
+                          ? "bg-black hover:bg-slate-800 text-white"
+                          : "bg-slate-100 hover:bg-slate-200 text-slate-900"
+                      }`}
                     >
+
                       {plan.name === "Free"
-                        ? "Start Free Trial"
+                        ? "Start Free"
                         : plan.name === "Creator"
-                          ? "Get Started"
-                          : "Upgrade"}
+                        ? "Get Started"
+                        : "Upgrade"}
+
                     </Button>
 
                     <ul className="space-y-4 text-sm text-slate-600">
 
                       <li className="flex items-center gap-3">
+
                         <Check className="w-5 h-5 text-green-500" />
+
                         {plan.credits} Credits
+
                       </li>
 
                       {plan.name !== "Free" && (
+
                         <li className="flex items-center gap-3">
+
                           <Check className="w-5 h-5 text-green-500" />
+
                           Unlimited Projects
+
                         </li>
                       )}
 
-                     
                     </ul>
 
                   </CardContent>
+
                 </Card>
               ))}
 
@@ -170,42 +337,59 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <section className="container mx-auto px-4 sm:px-6 md:px-8 max-w-3xl mb-24">
+
           <h2 className="text-3xl font-extrabold text-center mb-10">
             Frequently Asked Questions
           </h2>
 
           <div className="space-y-4">
+
             {faqs.map((faq, index) => (
+
               <div
                 key={index}
                 className="bg-white border border-slate-200 rounded-xl overflow-hidden"
               >
+
                 <button
                   className="w-full px-6 py-5 flex items-center justify-between"
-                  onClick={() => toggleFaq(index)}
+                  onClick={() =>
+                    toggleFaq(index)
+                  }
                 >
+
                   <span className="font-semibold text-left pr-4">
                     {faq.question}
                   </span>
 
                   <ChevronDown
-                    className={`w-5 h-5 transition-transform ${openFaqIndex === index ? "rotate-180" : ""
-                      }`}
+                    className={`w-5 h-5 transition-transform ${
+                      openFaqIndex === index
+                        ? "rotate-180"
+                        : ""
+                    }`}
                   />
+
                 </button>
 
                 {openFaqIndex === index && (
+
                   <div className="px-6 pb-5 text-slate-500 text-sm">
                     {faq.answer}
                   </div>
+
                 )}
+
               </div>
             ))}
+
           </div>
+
         </section>
-    <PublicFooter/>
+
+        <PublicFooter />
+
       </main>
     </div>
-    
   );
 }

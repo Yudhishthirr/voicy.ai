@@ -110,17 +110,17 @@ export default function ProfileSettingsPage() {
             <div className="flex justify-between items-end mb-3">
               <h3 className="text-sm font-bold text-slate-900">Credits Usage</h3>
               <span className="text-sm text-slate-500 font-medium">
-                {credits} / 8000 credits
+                {credits} / 10
               </span>
             </div>
 
             <Progress
-              value={(credits / 8000) * 100}
+              value={(credits / 10) * 100}
               className="h-2.5 mb-2 bg-slate-100 [&>div]:bg-violet-600"
             />
 
             <p className="text-xs text-slate-400 font-medium">
-              Free users get 10 credits • Max limit 8000
+              Free users get 10 credits • Max limit 10
             </p>
 
             {credits <= 5 && (

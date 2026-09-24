@@ -91,7 +91,7 @@ export const generateVoiceJob = inngest.createFunction(
     if (!creditResult?.success) {
       console.log(
         "Job stopped:",
-        creditResult?.reason
+        creditResult
       );
       return creditResult;
     }
@@ -229,7 +229,8 @@ export const generateVoiceJob = inngest.createFunction(
         </div>
       </div>
     `,
-    idempotencyKey: `voice-email/${recordId}`, // ✅ prevent duplicates
+    // idempotencyKey: `voice-email/${recordId}`, 
+    // ✅ prevent duplicates
   });
 
   if (error) {
